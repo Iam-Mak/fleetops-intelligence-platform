@@ -1,11 +1,11 @@
 output "resource_group_name" {
   description = "Name of the Azure Resource Group."
-  value       = azurerm_resource_group.commercial_vehicle.name
+  value       = azurerm_resource_group.fleetops.name
 }
 
 output "resource_group_id" {
   description = "Resource ID of the Azure Resource Group."
-  value       = azurerm_resource_group.commercial_vehicle.id
+  value       = azurerm_resource_group.fleetops.id
 }
 
 output "storage_account_name" {
@@ -45,7 +45,7 @@ output "gold_filesystem_name" {
 
 output "location" {
   description = "Azure region where the foundation resources are deployed."
-  value       = azurerm_resource_group.commercial_vehicle.location
+  value       = azurerm_resource_group.fleetops.location
 }
 
 output "managed_filesystem_name" {
