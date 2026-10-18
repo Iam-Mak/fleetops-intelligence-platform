@@ -1,86 +1,73 @@
 # FleetOps Intelligence
 
-**An Azure data platform for commercial vehicle telemetry and fleet analytics.**
+**An Azure data platform for commercial vehicle operations and fleet analytics.**
 
 ## Overview
 
-FleetOps Intelligence explores the design and implementation of a cloud-based data pipeline using the historical DT-CARGO dataset. It processes vehicle records, trip metadata and speed measurements into structured, analytics-ready data, with an emphasis on reliable ingestion, data quality, governance and repeatable infrastructure.
+FleetOps Intelligence is an end-to-end data platform engineering project built around historical vehicle telemetry and fleet operations. It explores how to provision cloud infrastructure, build reliable data pipelines, govern access to data, and deliver analytics ready datasets using Azure.
+
+The platform is organised around two business domains: **Fleet Operations** and **Fleet Maintenance**. The goal is to build a practical, reproducible platform that demonstrates both data engineering and the infrastructure, security, and operational decisions behind it.
 
 ## Architecture
 
 ```text
-DT-CARGO Dataset
-       |
-       v
-  ADLS Gen2
-    Landing
-       |
-       v
-    Bronze
-       |
-       v
-    Silver
-       |
-       v
-     Gold
-       |
-       v
- Analytics-ready data
+               DT-CARGO Dataset
+                      |
+                      v
+             Azure Data Lake Gen2
+                      |
+            Landing / Source Files
+                      |
+                      v
+              Azure Databricks
+             Apache Spark / Delta
+                      |
+              Bronze → Silver → Gold
+                      |
+             +--------+--------+
+             |                 |
+             v                 v
+      Fleet Operations   Fleet Maintenance
+       Unity Catalog       Unity Catalog
+             |                 |
+             +--------+--------+
+                      |
+               Fleet Analytics
 ```
 
-**Processing:** Azure Databricks · Apache Spark · Delta Lake  
-**Infrastructure:** Terraform · Azure  
-**Governance:** Unity Catalog
-
-The data lake separates raw inputs from progressively refined datasets. Unity Catalog managed storage is configured separately from the Landing-to-Gold processing layers.
+The two domains are intended to be governed through separate Unity Catalog catalogs: `fleet_operations` and `fleet_maintenance`. Shared infrastructure supports both, while data access and processing are organised around their respective responsibilities.
 
 ## Technology Stack
 
-| Technology | Purpose |
+| Area | Technologies |
 |---|---|
-| Terraform | Infrastructure as code and repeatable provisioning |
-| Azure Data Lake Storage Gen2 | Data lake storage and layer separation |
-| Azure Databricks | Distributed data processing |
-| Delta Lake | Reliable, schema-aware data tables |
-| Unity Catalog | Data access control and governance |
-| Python / PySpark | Ingestion, transformation and validation |
-| Git | Version control and collaboration |
+| Cloud and storage | Microsoft Azure, Azure Data Lake Storage Gen2 |
+| Data platform | Azure Databricks, Apache Spark, PySpark, Delta Lake |
+| Infrastructure as code | Terraform |
+| Governance and security | Unity Catalog, Azure Managed Identity, Azure RBAC |
+| Development | Python, SQL, Git |
+| Automation and quality | GitHub Actions, automated testing *(planned)* |
 
-## Repository Structure
+## Engineering Scope
 
-```text
-FleetOps/
-├── infrastructure/
-│   └── terraform/
-│       ├── foundation/       # Azure resource group and data lake
-│       ├── databricks/       # Databricks infrastructure
-│       ├── unity_catalog/    # Governance configuration
-│       └── sql_database/     # Optional SQL resources
-└── local/
-    ├── notebooks/            # Exploration and development
-    └── src/                  # Reusable processing code
-```
+- **Infrastructure:** Provision and manage Azure resources with Terraform, keeping the foundation and Databricks infrastructure separate.
+- **Data pipelines:** Build ingestion and transformation workflows using the Landing, Bronze, Silver, and Gold layers.
+- **Governance:** Configure Unity Catalog storage access, catalogs, schemas, and permissions for the two business domains.
+- **Reliability:** Implement data validation, deduplication, safe reruns, and failure recovery.
+- **Delivery and operations:** Introduce automated testing, CI/CD, monitoring, and cost-aware resource management.
+- **Analytics:** Develop validated fleet utilisation metrics and, where suitable data is available, maintenance and downtime analysis.
 
-Infrastructure is separated into Terraform stacks to keep resource provisioning modular and make dependencies between components explicit.
+## Data and Business Use Case
 
-## Pipeline Design
+The initial data source is the historical DT-CARGO research dataset, including fleet metadata, trip records, and detailed speed measurements.
 
-| Layer | Responsibility |
-|---|---|
-| **Landing** | Retain incoming source files |
-| **Bronze** | Ingest source records with traceability |
-| **Silver** | Apply schema enforcement, validation and consistency checks |
-| **Gold** | Prepare curated datasets for fleet and trip analysis |
+The project will focus initially on vehicle activity, trip volumes, distance travelled, and data quality. Maintenance analytics may be added using suitable public or clearly labelled synthetic data.
 
-Speed telemetry is the largest dataset component, making batch processing, duplicate prevention and recovery important parts of the ingestion design.
+DT-CARGO is historical data, not a live feed. Incremental-processing demonstrations will use controlled replay batches and will be documented accordingly.
 
-## Status & Next Steps
+## Status
 
-**Current stage: Azure foundation**
+The Azure foundation, ADLS Gen2 storage, and initial Azure Databricks workspace have been provisioned with Terraform. The Access Connector and storage permissions have been configured as part of the storage integration work.
 
-The Terraform foundation has been configured and validated. The initial plan covers an Azure resource group, an ADLS Gen2 storage account and five filesystems.
-
-Next: provision the foundation, integrate Databricks with storage, implement the data pipeline, configure Unity Catalog, and introduce automated testing and deployment.
-
-**Data note:** DT-CARGO is historical research data. Any simulated incremental arrivals will be identified as replayed data, not live telemetry.
+Unity Catalog integration, the two domain catalogs, data pipelines, and automated engineering practices are being developed incrementally.
 
