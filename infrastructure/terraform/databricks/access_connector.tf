@@ -1,6 +1,6 @@
 
 resource "azurerm_databricks_access_connector" "fleetops" {
-  name                = "ac-fleetops-dev"
+  name                = var.access_connector_name
   resource_group_name = data.terraform_remote_state.foundation.outputs.resource_group_name
   location            = data.terraform_remote_state.foundation.outputs.location
 

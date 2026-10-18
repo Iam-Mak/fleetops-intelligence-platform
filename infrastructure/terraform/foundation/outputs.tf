@@ -8,6 +8,11 @@ output "resource_group_id" {
   value       = azurerm_resource_group.fleetops.id
 }
 
+output "location" {
+  description = "Azure region where the foundation resources are deployed."
+  value       = azurerm_resource_group.fleetops.location
+}
+
 output "storage_account_name" {
   description = "Name of the ADLS Gen2 storage account."
   value       = azurerm_storage_account.data_lake.name
@@ -23,32 +28,10 @@ output "storage_dfs_endpoint" {
   value       = azurerm_storage_account.data_lake.primary_dfs_endpoint
 }
 
-output "landing_filesystem_name" {
-  description = "Name of the ADLS Gen2 landing filesystem."
-  value       = azurerm_storage_data_lake_gen2_filesystem.landing.name
-}
-
-output "bronze_filesystem_name" {
-  description = "Name of the ADLS Gen2 bronze filesystem."
-  value       = azurerm_storage_data_lake_gen2_filesystem.bronze.name
-}
-
-output "silver_filesystem_name" {
-  description = "Name of the ADLS Gen2 silver filesystem."
-  value       = azurerm_storage_data_lake_gen2_filesystem.silver.name
-}
-
-output "gold_filesystem_name" {
-  description = "Name of the ADLS Gen2 gold filesystem."
-  value       = azurerm_storage_data_lake_gen2_filesystem.gold.name
-}
-
-output "location" {
-  description = "Azure region where the foundation resources are deployed."
-  value       = azurerm_resource_group.fleetops.location
-}
-
-output "managed_filesystem_name" {
-  description = "Name of the ADLS Gen2 managed filesystem for Unity Catalog."
-  value       = azurerm_storage_data_lake_gen2_filesystem.managed.name
+output "filesystem_names" {
+  description = "Names of the ADLS Gen2 filesystems."
+  value       = {
+    for name, filesystem in azurerm_storage_data_lake_gen2_filesystem.lake :
+    name => filesystem.name
+  }
 }

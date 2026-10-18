@@ -1,5 +1,5 @@
 locals {
-  managed_storage_root = "abfss://${data.terraform_remote_state.foundation.outputs.managed_filesystem_name}@${replace(
+  managed_storage_root = "abfss://${data.terraform_remote_state.foundation.outputs.filesystem_names["managed"]}@${replace(
     trimsuffix(data.terraform_remote_state.foundation.outputs.storage_dfs_endpoint, "/"),
     "https://",
     ""

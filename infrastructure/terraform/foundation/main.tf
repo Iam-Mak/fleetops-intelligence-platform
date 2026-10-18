@@ -17,27 +17,15 @@ resource "azurerm_storage_account" "data_lake" {
   tags = local.common_tags
 }
 
-resource "azurerm_storage_data_lake_gen2_filesystem" "landing" {
-  name               = "landing"
-  storage_account_id = azurerm_storage_account.data_lake.id
-}
+resource "azurerm_storage_data_lake_gen2_filesystem" "lake" {
+  for_each = toset([
+    "landing",
+    "bronze",
+    "silver",
+    "gold",
+    "managed"
+  ])
 
-resource "azurerm_storage_data_lake_gen2_filesystem" "bronze" {
-  name               = "bronze"
-  storage_account_id = azurerm_storage_account.data_lake.id
-}
-
-resource "azurerm_storage_data_lake_gen2_filesystem" "silver" {
-  name               = "silver"
-  storage_account_id = azurerm_storage_account.data_lake.id
-}
-
-resource "azurerm_storage_data_lake_gen2_filesystem" "gold" {
-  name               = "gold"
-  storage_account_id = azurerm_storage_account.data_lake.id
-}
-
-resource "azurerm_storage_data_lake_gen2_filesystem" "managed" {
-  name               = "managed"
+  name               = each.value
   storage_account_id = azurerm_storage_account.data_lake.id
 }
